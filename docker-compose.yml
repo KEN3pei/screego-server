@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  screego:
+    image: screego/server:latest
+    container_name: screego
+    restart: unless-stopped
+    ports:
+      - "3478:3478/tcp"
+      - "3478:3478/udp"
+      - "50000-50200:50000-50200/udp"
+    volumes:
+      - ./config/users.passwd:/users.passwd:ro
+    environment:
+      SCREEGO_EXTERNAL_IP: "${SCREEGO_EXTERNAL_IP}"
+      SCREEGO_SECRET: "${SCREEGO_SECRET}"
+      SCREEGO_SERVER_TLS: "false"
+      SCREEGO_SERVER_ADDRESS: "0.0.0.0:5050"
+      SCREEGO_TURN_ADDRESS: "0.0.0.0:3478"
+      SCREEGO_TURN_PORT_RANGE: "50000:50200"
+      SCREEGO_TRUST_PROXY_HEADERS: "true"
+      SCREEGO_AUTH_MODE: "${SCREEGO_AUTH_MODE:-turn}"
+      SCREEGO_USERS_FILE: "/users.passwd"
+      SCREEGO_LOG_LEVEL: "${SCREEGO_LOG_LEVEL:-info}"
+      SCREEGO_CLOSE_ROOM_WHEN_OWNER_LEAVES: "${SCREEGO_CLOSE_ROOM_WHEN_OWNER_LEAVES:-true}"
+      SCREEGO_SESSION_TIMEOUT_SECONDS: "${SCREEGO_SESSION_TIMEOUT_SECONDS:-0}"
+    networks:
+      - screego-net
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: screego-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - screego
+    networks:
+      - screego-net
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: screego-certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+  screego-net:
+    driver: bridge

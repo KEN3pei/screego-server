@@ -1,0 +1,19 @@
+# 環境設定 (シークレットを含むためコミットしない)
+.env
+
+# Let's Encrypt 証明書 (コミットしない)
+certbot/conf/
+certbot/www/
+
+# ユーザーパスワードファイル (シークレットを含むためコミットしない)
+config/users.passwd
+
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*.swo

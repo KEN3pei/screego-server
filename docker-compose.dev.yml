@@ -1,0 +1,27 @@
+version: '3.8'
+
+# 開発・テスト用: TLS なし、ポート 5050 で直接アクセス
+# 使い方: docker compose -f docker-compose.dev.yml up
+services:
+  screego:
+    image: screego/server:latest
+    container_name: screego-dev
+    restart: unless-stopped
+    ports:
+      - "5050:5050"
+      - "3478:3478/tcp"
+      - "3478:3478/udp"
+      - "50000-50200:50000-50200/udp"
+    volumes:
+      - ./config/users.passwd:/users.passwd:ro
+    environment:
+      SCREEGO_EXTERNAL_IP: "${SCREEGO_EXTERNAL_IP:-127.0.0.1}"
+      SCREEGO_SECRET: "${SCREEGO_SECRET:-dev-secret-change-me}"
+      SCREEGO_SERVER_TLS: "false"
+      SCREEGO_SERVER_ADDRESS: "0.0.0.0:5050"
+      SCREEGO_TURN_ADDRESS: "0.0.0.0:3478"
+      SCREEGO_TURN_PORT_RANGE: "50000:50200"
+      SCREEGO_AUTH_MODE: "${SCREEGO_AUTH_MODE:-none}"
+      SCREEGO_USERS_FILE: "/users.passwd"
+      SCREEGO_LOG_LEVEL: "debug"
+      SCREEGO_CLOSE_ROOM_WHEN_OWNER_LEAVES: "true"
