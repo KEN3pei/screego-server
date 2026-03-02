@@ -60,10 +60,15 @@ cp .env.example .env
 | `CERTBOT_EMAIL` | Let's Encrypt 登録メール | `admin@example.com` |
 | `SCREEGO_AUTH_MODE` | 認証モード | `turn`(推奨) / `all` / `none` |
 
-外部 IP は以下で確認できます:
-```bash
-curl https://api.ipify.org
-```
+- SCREEGO_EXTERNAL_IP
+  - サーバーが固定IPアドレスを持たない場合は、ドメイン名からIPアドレスを取得できます。
+    - SCREEGO_EXTERNAL_IP=dns:app.screego.net
+  - 使用するDNSサーバーを指定することも可能です。
+    - SCREEGO_EXTERNAL_IP=dns:app.screego.net@9.9.9.9:53
+  - `curl https://api.ipify.org`で外部IPを確認して設定する。
+
+
+
 
 ### 3. セットアップを実行
 

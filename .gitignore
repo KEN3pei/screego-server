@@ -8,6 +8,9 @@ certbot/www/
 # ユーザーパスワードファイル (シークレットを含むためコミットしない)
 config/users.passwd
 
+# K8s 平文 Secret (kubeseal で暗号化してから screego-sealed-secret.yaml を Git 管理する)
+manifests/screego-secret.yaml
+
 # OS
 .DS_Store
 Thumbs.db

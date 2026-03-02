@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: screego-config
+  namespace: screego
+data:
+  # TailscaleのIPアドレス (tailscale ip コマンドで確認)
+  SCREEGO_EXTERNAL_IP: "100.87.96.104"
+  SCREEGO_SERVER_TLS: "false"
+  SCREEGO_SERVER_ADDRESS: "0.0.0.0:5050"
+  SCREEGO_TURN_ADDRESS: "0.0.0.0:3478"
+  SCREEGO_TURN_PORT_RANGE: "50000:50200"
+  # turn: TURN接続時のみ認証 / all: 常にログイン必須 / none: 認証なし
+  SCREEGO_AUTH_MODE: "turn"
+  SCREEGO_USERS_FILE: "/users.passwd"
+  SCREEGO_LOG_LEVEL: "info"
+  SCREEGO_CLOSE_ROOM_WHEN_OWNER_LEAVES: "true"
+  SCREEGO_SESSION_TIMEOUT_SECONDS: "0"
+  SCREEGO_TRUST_PROXY_HEADERS: "false"

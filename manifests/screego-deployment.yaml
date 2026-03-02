@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: screego
+  namespace: screego
+  labels:
+    app: screego
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: screego
+  template:
+    metadata:
+      labels:
+        app: screego
+    spec:
+      # ノードのネットワークを直接使用
+      # TURNのUDPポート範囲 (50000-50200) をそのまま公開できる
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: screego
+          image: screego/server:1.12.2
+          envFrom:
+            - configMapRef:
+                name: screego-config
+            - secretRef:
+                name: screego-secret
+          volumeMounts:
+            - name: users-passwd
+              mountPath: /users.passwd
+              subPath: users.passwd
+          ports:
+            - containerPort: 5050
+              protocol: TCP
+              name: http
+            - containerPort: 3478
+              protocol: TCP
+              name: turn-tcp
+            - containerPort: 3478
+              protocol: UDP
+              name: turn-udp
+      volumes:
+        - name: users-passwd
+          secret:
+            secretName: screego-secret
